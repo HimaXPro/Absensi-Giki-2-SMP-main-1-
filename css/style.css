@@ -1,0 +1,22 @@
+ body {
+     background: #cfd9ea;
+ }
+
+ /* login */
+ .panel-kiri {
+     background: linear-gradient(to bottom right, #729ad8, #4f78c8)
+ }
+
+ .btn-pill {
+     border-radius: 999px
+ }
+
+ .tab-btn {
+     cursor: pointer
+ }
+
+ .maxw {
+     max-width: 980px
+ }
+
+ /* dasboadrd siswa */

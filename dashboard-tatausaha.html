@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Absensi Siswa — Tata Usaha (Gabungan)</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --blue-50: #f3f6fd;
+            --blue-100: #eef5ff;
+            --blue-200: #e8f0fc;
+            --blue-300: #dfe8f5;
+            --blue-400: #c8d7f3;
+            --indigo-500: #244c98;
+            --indigo-600: #1f3d8f;
+            --card-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+            --radius-xl: 22px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+        }
+
+        body {
+            background: var(--blue-300);
+            font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            margin: 0
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 110px;
+            background: var(--blue-100);
+            border-right: 2px solid var(--blue-400);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: var(--radius-xl);
+            margin: 12px;
+            box-shadow: 0 10px 26px rgba(29, 51, 109, .12)
+        }
+
+        .sidebar .btn-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: #4a6db0;
+            background: transparent;
+            margin: 12px 0;
+            position: relative;
+            cursor: pointer;
+            transition: .2s
+        }
+
+        .sidebar .btn-icon:hover {
+            background: #dce8ff;
+            color: #2f4e9e;
+            box-shadow: 0 6px 12px rgba(79, 120, 200, .15)
+        }
+
+        .sidebar .btn-icon.active {
+            background: linear-gradient(180deg, #cfe0ff, #9cb7ff);
+            color: var(--indigo-600);
+            box-shadow: 0 10px 18px rgba(79, 120, 200, .25)
+        }
+
+        .sidebar .btn-icon.active::before {
+            content: "";
+            position: absolute;
+            left: -12px;
+            width: 6px;
+            height: 24px;
+            border-radius: 6px;
+            background: #6b8efc;
+            box-shadow: 0 0 0 3px rgba(107, 142, 252, .25)
+        }
+
+        /* PAGE */
+        .page {
+            margin-left: 140px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column
+        }
+
+        .topbar {
+            background: var(--blue-300);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1e2d58
+        }
+
+        .header-title span {
+            color: var(--indigo-500)
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            border: 2px solid #d0d8e8
+        }
+
+        /* CARDS */
+        .card-stat {
+            background: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px
+        }
+
+        .filter-box,
+        .chart-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            margin-top: 20px
+        }
+
+        footer {
+            text-align: center;
+            color: #6c757d;
+            padding: 15px 28px;
+            font-size: 14px
+        }
+
+        /* KELAS GRID */
+        .kelas-card {
+            background: linear-gradient(180deg, #91a9d8, #3c5f99);
+            border-radius: 22px;
+            padding: 30px 10px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 8px 16px rgba(44, 56, 92, .25);
+            transition: .25s
+        }
+
+        .kelas-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px rgba(44, 56, 92, .35)
+        }
+
+        .kelas-code {
+            font-size: 26px;
+            font-weight: 700
+        }
+
+        .kelas-card i {
+            font-size: 38px;
+            margin: 12px 0
+        }
+
+        .kelas-card button {
+            margin-top: 12px;
+            background: #eef3ff;
+            color: var(--indigo-500);
+            padding: 6px 28px;
+            border-radius: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: .2s
+        }
+
+        .kelas-card button:hover {
+            background: #dce6ff
+        }
+
+        /* FORM TAMBAH SISWA */
+        .modal-page {
+            background: #3c5f99;
+            color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 420px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .2)
+        }
+
+        .modal-page input,
+        .modal-page select {
+            width: 100%;
+            padding: 6px 8px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border: none
+        }
+
+        .modal-page button {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600
+        }
+
+        .back-btn {
+            background: #eef3ff;
+            color: var(--indigo-500)
+        }
+
+        .back-btn:hover {
+            background: #dce6ff
+        }
+
+        .save-btn {
+            background: #6b8efc;
+            color: #fff
+        }
+
+        .save-btn:hover {
+            background: #5874d4
+        }
+
+        /* EDIT SISWA */
+        .edit-wrap {
+            max-width: 720px;
+            margin: 0 auto
+        }
+
+        .edit-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 18px 32px rgba(36, 76, 152, .15);
+            overflow: hidden
+        }
+
+        .edit-head {
+            background: #33437a;
+            color: #fff;
+            padding: 14px 18px;
+            font-weight: 600
+        }
+
+        .edit-body {
+            padding: 18px
+        }
+
+        .cell-box {
+            background: #ffffff;
+            border: 1px solid #e4e7f2;
+            border-radius: 16px;
+            overflow: hidden
+        }
+
+        .cell-box .rowx {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            border-bottom: 1px solid #e9ecf6
+        }
+
+        .cell-box .rowx:last-child {
+            border-bottom: none
+        }
+
+        .cell-box .label {
+            padding: 16px 18px;
+            font-weight: 600;
+            color: #2a4376;
+            background: linear-gradient(0deg, #f4f6ff, #f9fbff)
+        }
+
+        .cell-box .value {
+            padding: 16px 18px;
+            color: #2b2f38
+        }
+
+        .cell-box .value .form-control,
+        .cell-box .value .form-select {
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            background: transparent
+        }
+
+        .cell-box .value .form-control:focus,
+        .cell-box .value .form-select:focus {
+            outline: none;
+            box-shadow: none
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            padding: 12px 0 6px
+        }
+
+        .btn-soft-danger {
+            background: #e74a3b;
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 22px;
+            font-weight: 700
+        }
+
+        .btn-soft-primary {
+            background: #6b8efc;
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 22px;
+            font-weight: 700
+        }
+
+        .btn-soft-danger:hover,
+        .btn-soft-primary:hover {
+            filter: brightness(.95)
+        }
+
+        /* PROFIL */
+        .profile-hero {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 28px
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 16px 28px rgba(36, 76, 152, .12);
+            padding: 22px
+        }
+
+        .profile-photo {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, .15);
+            margin: auto
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .profile-name {
+            font-weight: 700;
+            text-align: center;
+            margin-top: 12px;
+            color: #2a4376
+        }
+
+        .profile-form .form-control {
+            background: #f6f8ff;
+            border: 1px solid #e5e9f7
+        }
+
+        .btn-update {
+            background: #33437a;
+            color: #fff;
+            border: none;
+            border-radius: 28px;
+            padding: 12px 24px;
+            font-weight: 700
+        }
+
+        .btn-update:hover {
+            filter: brightness(.95)
+        }
+
+        /* LOGOUT CONFIRM (bubble) */
+        .overlay-dim {
+            position: fixed;
+            inset: 0;
+            background: rgba(28, 39, 64, .25);
+            backdrop-filter: blur(1px);
+            display: none;
+            z-index: 1050
+        }
+
+        .confirm-pop {
+            position: fixed;
+            display: none;
+            z-index: 1051;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 16px 32px rgba(28, 39, 64, .25);
+            padding: 14px 16px;
+            width: 280px
+        }
+
+        .confirm-title {
+            font-weight: 700;
+            color: #2a3f6b;
+            margin: 4px 2px 12px 2px
+        }
+
+        .confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px
+        }
+
+        .btn-cancel {
+            background: #eef2f7;
+            color: #4d5b76;
+            border: none;
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-weight: 700
+        }
+
+        .btn-logout {
+            background: #2f55d4;
+            color: #fff;
+            border: none;
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-weight: 700
+        }
+
+        .btn-cancel:hover {
+            filter: brightness(.97)
+        }
+
+        .btn-logout:hover {
+            filter: brightness(.95)
+        }
+
+        /* SECTION VISIBILITY */
+        .app-section {
+            display: none
+        }
+
+        .app-section.active {
+            display: block
+        }
+
+        /* Responsif: pusatkan popup di layar kecil */
+        @media (max-width: 600px) {
+            .confirm-pop {
+                left: 50% !important;
+                top: calc(50vh - 120px) !important;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div>
+            <div class="btn-icon active" id="navHome" data-bs-toggle="tooltip" data-bs-placement="right"
+                title="Beranda"><i class="bi bi-house-door"></i></div>
+            <div class="btn-icon" id="navKelas" data-bs-toggle="tooltip" data-bs-placement="right" title="Data Kelas"><i
+                    class="bi bi-journal-bookmark"></i></div>
+            <div class="btn-icon" id="navProfil" data-bs-toggle="tooltip" data-bs-placement="right" title="Profil"><i
+                    class="bi bi-person"></i></div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="btn-icon" id="navPengaturan" data-bs-toggle="tooltip" data-bs-placement="right"
+                title="Pengaturan"><i class="bi bi-gear"></i></div>
+            <div class="btn-icon" id="btnLogout" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout"><i
+                    class="bi bi-box-arrow-left"></i></div>
+        </div>
+    </aside>
+
+    <!-- PAGE -->
+    <main class="page">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <h5 class="header-title mb-0">Absensi Siswa | <span>SMP GIKI 2 Surabaya</span></h5>
+                <small id="headerSub">Dashboard</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="text-end">
+                    <div class="fw-semibold" id="headerNama">Ardin Yanto</div>
+                    <small class="text-muted" id="headerNIP">NIS. 12090235909</small>
+                </div>
+                <div class="avatar"><i class="bi bi-person"></i></div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section class="p-4 app-section active" id="sectionDashboard">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card-stat"><i class="bi bi-person-circle text-warning fs-3"></i>
+                        <div>
+                            <div class="text-muted small">Total Siswa Aktif</div>
+                            <div class="fw-bold fs-5 text-dark" id="kpiTotal">450</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-stat"><i class="bi bi-building text-success fs-3"></i>
+                        <div>
+                            <div class="text-muted small">Jumlah Kelas</div>
+                            <div class="fw-bold fs-5 text-dark" id="kpiKelas">21</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-stat"><i class="bi bi-percent text-primary fs-3"></i>
+                        <div>
+                            <div class="text-muted small">Persentase Kehadiran</div>
+                            <div class="fw-bold fs-5 text-dark" id="kpiHadir">90%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-stat"><i class="bi bi-percent text-danger fs-3"></i>
+                        <div>
+                            <div class="text-muted small">Persentase Ketidakhadiran</div>
+                            <div class="fw-bold fs-5 text-dark" id="kpiAbsen">10%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-box">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3"><label class="form-label small">Kelas</label><select class="form-select"
+                            id="filterKelas">
+                            <option>Semua</option>
+                        </select></div>
+                    <div class="col-md-3"><label class="form-label small">Mata Pelajaran</label><select
+                            class="form-select" id="filterMapel">
+                            <option>Semua</option>
+                            <option>Matematika</option>
+                            <option>IPA</option>
+                            <option>IPS</option>
+                        </select></div>
+                    <div class="col-md-3"><label class="form-label small">Rentang Waktu</label><select
+                            class="form-select" id="filterRentang">
+                            <option>Bulanan</option>
+                            <option>Mingguan</option>
+                        </select></div>
+                    <div class="col-md-3 text-md-start"><button class="btn btn-primary w-100" id="btnTerapkan">Terapkan
+                            Filter</button></div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h6 class="fw-semibold mb-3">Persentase Kehadiran per Kelas</h6><canvas id="barChart"></canvas>
+                    </div>
+                    <div class="col-lg-4 mt-4 mt-lg-0">
+                        <h6 class="fw-semibold mb-3">Komposisi Kehadiran</h6><canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATA KELAS -->
+        <section class="p-4 app-section" id="sectionDataKelas">
+            <!-- GRID KELAS -->
+            <div id="gridKelas">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-semibold mb-0">Data Kelas</h4>
+                    <small class="text-muted">Klik salah satu untuk melihat daftar siswa</small>
+                </div>
+                <div class="row g-4" id="kelasContainer"></div>
+            </div>
+
+            <!-- DAFTAR SISWA -->
+            <div id="lihatKelas" style="display:none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-semibold" id="kelasTitle">Kelas 9A</h4>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="showSubSection('gridKelas')"><i
+                                class="bi bi-arrow-left"></i> Kembali</button>
+                        <button class="btn btn-primary btn-sm" onclick="showSubSection('tambahSiswa')"><i
+                                class="bi bi-plus"></i> Tambah Siswa</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>NIS</th>
+                                <th>Nama</th>
+                                <th>Jenis Kelamin</th>
+                                <th>Kelas</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="siswaContainer"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FORM TAMBAH -->
+            <div id="tambahSiswa" style="display:none;">
+                <div class="modal-page mt-4">
+                    <button class="back-btn mb-2" onclick="showSubSection('lihatKelas')"><i
+                            class="bi bi-arrow-left"></i> Kembali</button>
+                    <h5 class="text-center mb-3">Isi Data Siswa</h5>
+                    <input type="text" id="nis" placeholder="NIS">
+                    <input type="text" id="nama" placeholder="Nama">
+                    <select id="jk">
+                        <option value="Laki-Laki">Laki-Laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                    <input type="text" id="kelasInput" readonly>
+                    <button class="save-btn" onclick="simpanSiswa()">Simpan</button>
+                </div>
+            </div>
+
+            <!-- FORM EDIT (KHUSUS) -->
+            <div id="editSiswa" style="display:none;">
+                <div class="edit-wrap mt-3">
+                    <button class="btn btn-outline-secondary mb-3" onclick="showSubSection('lihatKelas')"><i
+                            class="bi bi-arrow-left"></i> Kembali</button>
+                    <div class="edit-card">
+                        <div class="edit-head">Edit Data Siswa</div>
+                        <div class="edit-body">
+                            <div class="cell-box">
+                                <div class="rowx">
+                                    <div class="label">NIS</div>
+                                    <div class="value"><input id="e_nis" class="form-control" readonly></div>
+                                </div>
+                                <div class="rowx">
+                                    <div class="label">Nama</div>
+                                    <div class="value"><input id="e_nama" class="form-control" placeholder="Nama siswa">
+                                    </div>
+                                </div>
+                                <div class="rowx">
+                                    <div class="label">Jenis Kelamin</div>
+                                    <div class="value"><select id="e_jk" class="form-select">
+                                            <option value="Laki-Laki">Laki-Laki</option>
+                                            <option value="Perempuan">Perempuan</option>
+                                        </select></div>
+                                </div>
+                                <div class="rowx">
+                                    <div class="label">Kelas</div>
+                                    <div class="value"><input id="e_kelas" class="form-control" readonly></div>
+                                </div>
+                            </div>
+                            <div class="edit-actions">
+                                <button class="btn-soft-danger" onclick="hapusSiswa()"><i
+                                        class="bi bi-trash3 me-1"></i>Hapus</button>
+                                <button class="btn-soft-primary" onclick="simpanEdit()"><i
+                                        class="bi bi-check2-circle me-1"></i>Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFIL TATA USAHA -->
+        <section class="p-4 app-section" id="sectionProfil">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3 class="fw-semibold mb-0">Profil Tata Usaha</h3>
+            </div>
+
+            <div class="profile-hero mt-3">
+                <!-- KIRI: FOTO + NAMA -->
+                <div class="profile-card text-center">
+                    <div class="profile-photo">
+                        <img id="profileImg"
+                            src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop"
+                            alt="Foto Profil">
+                    </div>
+                    <div class="profile-name" id="profileNamaTampilan">Ardin Yanto</div>
+                </div>
+
+                <!-- KANAN: FORM -->
+                <div class="profile-card profile-form">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label fw-semibold small">Nama Depan:</label><input
+                                id="pf_namaDepan" class="form-control" value="Ardin"></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold small">Nama Belakang:</label><input
+                                id="pf_namaBelakang" class="form-control" value="Yanto"></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold small">NIP:</label><input id="pf_nip"
+                                class="form-control" value="12090235909"></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold small">Email:</label><input
+                                id="pf_email" type="email" class="form-control" value="ardinyanto@gmail.com"></div>
+                        <div class="col-md-12"><label class="form-label fw-semibold small">Jabatan:</label><input
+                                id="pf_jabatan" class="form-control" value="Staf Tata Usaha"></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold small">Telepon:</label><input
+                                id="pf_telepon" class="form-control" value="089-764-532-176"></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold small">Alamat:</label><input
+                                id="pf_alamat" class="form-control" value="Surabaya"></div>
+                    </div>
+                    <div class="mt-4"><button class="btn-update" onclick="updateProfil()"><i
+                                class="bi bi-cloud-check me-1"></i>Update Profile</button></div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="mt-auto">&copy; 2025 SMP GIKI 2 Surabaya — Absensi Siswa</footer>
+    </main>
+
+    <!-- Logout Backdrop & Popup -->
+    <div id="logoutBackdrop" class="overlay-dim"></div>
+    <div id="logoutPop" class="confirm-pop" role="dialog" aria-modal="true" aria-labelledby="logoutTitle"
+        aria-hidden="true">
+        <div id="logoutTitle" class="confirm-title">Are you sure,<br />you want to logout?</div>
+        <div class="confirm-actions">
+            <button id="btnCancelLogout" class="btn-cancel">Cancel</button>
+            <button id="btnDoLogout" class="btn-logout">Logout</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ===== TOOLTIP + NAV =====
+        const tooltipEls = [...document.querySelectorAll('[data-bs-toggle="tooltip"]')]; tooltipEls.forEach(el => new bootstrap.Tooltip(el));
+        const sections = { sectionDashboard: document.getElementById('sectionDashboard'), sectionDataKelas: document.getElementById('sectionDataKelas'), sectionProfil: document.getElementById('sectionProfil'), };
+        const headerSub = document.getElementById('headerSub');
+        const navHome = document.getElementById('navHome');
+        const navKelas = document.getElementById('navKelas');
+        const navProfil = document.getElementById('navProfil');
+
+        function setActiveNav(t) { document.querySelectorAll('.sidebar .btn-icon').forEach(b => b.classList.remove('active')); t.classList.add('active') }
+        function showAppSection(id) { Object.values(sections).forEach(s => s.classList.remove('active')); sections[id].classList.add('active') }
+
+        navHome.addEventListener('click', () => { setActiveNav(navHome); showAppSection('sectionDashboard'); headerSub.textContent = 'Dashboard' });
+        navKelas.addEventListener('click', () => { setActiveNav(navKelas); showAppSection('sectionDataKelas'); headerSub.textContent = 'Data Kelas' });
+        navProfil.addEventListener('click', () => { setActiveNav(navProfil); showAppSection('sectionProfil'); headerSub.textContent = 'Profil' });
+
+        // ===== CHARTS =====
+        const barCtx = document.getElementById('barChart'); const pieCtx = document.getElementById('pieChart');
+        const kelasLabels = ['7A', '7B', '7C', '7D', '8A', '8B', '8C', '8D', '9A', '9B', '9C', '9D'];
+        const dataHadir = [95, 90, 92, 94, 91, 93, 89, 90, 94, 92, 93, 95];
+        const dataIzin = [3, 4, 5, 3, 4, 4, 5, 3, 4, 4, 3, 3];
+        const dataSakit = [1, 3, 2, 2, 3, 2, 3, 4, 2, 3, 3, 1];
+        const dataAlfa = [1, 3, 1, 1, 2, 1, 3, 3, 1, 1, 1, 1];
+        if (barCtx) { new Chart(barCtx, { type: 'bar', data: { labels: kelasLabels, datasets: [{ label: 'Hadir', data: dataHadir, backgroundColor: '#4b7bec' }, { label: 'Izin', data: dataIzin, backgroundColor: '#f6c23e' }, { label: 'Sakit', data: dataSakit, backgroundColor: '#e74a3b' }, { label: 'Alfa', data: dataAlfa, backgroundColor: '#858796' }] }, options: { scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { position: 'top' } } } }); }
+        if (pieCtx) { new Chart(pieCtx, { type: 'pie', data: { labels: ['Hadir', 'Izin', 'Sakit', 'Alfa'], datasets: [{ data: [77, 10, 7, 6], backgroundColor: ['#4b7bec', '#f6c23e', '#e74a3b', '#858796'] }] }, options: { plugins: { legend: { position: 'top' } } } }); }
+
+        // ===== DATA KELAS & SISWA =====
+        const kelasList = ['9A', '9B', '9C', '9D', '9E', '8A', '8B', '8C', '8D', '8E', '7A', '7B', '7C', '7D', '7E'];
+        const siswaData = {
+            '9A': [
+                { nis: '230101', nama: 'Ahmad Rafi Pratama', jk: 'Laki-Laki' },
+                { nis: '230102', nama: 'Siti Nur Aisyah', jk: 'Perempuan' },
+                { nis: '230103', nama: 'Dimas Aditya Nugroho', jk: 'Laki-Laki' }
+            ]
+        };
+
+        const kelasContainer = document.getElementById('kelasContainer');
+        const siswaContainer = document.getElementById('siswaContainer');
+        const kelasTitle = document.getElementById('kelasTitle');
+        const kelasInput = document.getElementById('kelasInput');
+
+        const filterKelas = document.getElementById('filterKelas');['Semua', ...kelasList].forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = k; filterKelas.appendChild(o) });
+
+        function renderGridKelas() {
+            kelasContainer.innerHTML = kelasList.map(k => `
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="kelas-card">
+            <div class="kelas-code">${k}</div>
+            <i class="bi bi-mortarboard"></i>
+            <button onclick="lihatKelas('${k}')">Lihat Kelas</button>
+          </div>
+        </div>`).join('')
+        } renderGridKelas();
+
+        function showSubSection(which) {
+            document.getElementById('gridKelas').style.display = (which === 'gridKelas') ? 'block' : 'none';
+            document.getElementById('lihatKelas').style.display = (which === 'lihatKelas') ? 'block' : 'none';
+            document.getElementById('tambahSiswa').style.display = (which === 'tambahSiswa') ? 'block' : 'none';
+            document.getElementById('editSiswa').style.display = (which === 'editSiswa') ? 'block' : 'none';
+        }
+
+        function lihatKelas(k) {
+            kelasTitle.textContent = `Kelas ${k}`; kelasInput.value = k;
+            const rows = (siswaData[k] || []).map(s => `
+        <tr>
+          <td>${s.nis}</td>
+          <td>${s.nama}</td>
+          <td>${s.jk}</td>
+          <td>${k}</td>
+          <td><button class="btn btn-outline-secondary btn-sm" onclick="editSiswa('${k}','${s.nis}')"><i class="bi bi-pencil"></i> Edit</button></td>
+        </tr>`).join('');
+            siswaContainer.innerHTML = rows || '<tr><td colspan="5" class="text-center text-muted">Belum ada data</td></tr>';
+            showSubSection('lihatKelas');
+        }
+
+        function simpanSiswa() {
+            const nis = document.getElementById('nis').value.trim();
+            const nama = document.getElementById('nama').value.trim();
+            const jk = document.getElementById('jk').value;
+            const kelas = document.getElementById('kelasInput').value;
+            if (!nis || !nama) { alert('Isi semua data!'); return }
+            siswaData[kelas] = siswaData[kelas] || [];
+            const idx = siswaData[kelas].findIndex(s => s.nis === nis);
+            if (idx >= 0) siswaData[kelas][idx] = { nis, nama, jk }; else siswaData[kelas].push({ nis, nama, jk });
+            showSubSection('lihatKelas'); lihatKelas(kelas);
+            document.getElementById('nis').value = ''; document.getElementById('nama').value = ''; document.getElementById('jk').value = 'Laki-Laki';
+        }
+
+        // ===== EDIT VIEW =====
+        let editCtx = { kelas: null, index: -1 };
+        function editSiswa(kelas, nis) {
+            const arr = siswaData[kelas] || [];
+            const idx = arr.findIndex(s => s.nis === nis);
+            if (idx < 0) { alert('Data tidak ditemukan'); return }
+            editCtx = { kelas, index: idx };
+            const s = arr[idx];
+            document.getElementById('e_nis').value = s.nis;
+            document.getElementById('e_nama').value = s.nama;
+            document.getElementById('e_jk').value = s.jk;
+            document.getElementById('e_kelas').value = kelas;
+            showSubSection('editSiswa');
+        }
+        function simpanEdit() {
+            const { kelas, index } = editCtx; if (index < 0) return;
+            const nama = document.getElementById('e_nama').value.trim();
+            const jk = document.getElementById('e_jk').value;
+            if (!nama) { alert('Nama tidak boleh kosong'); return }
+            siswaData[kelas][index].nama = nama;
+            siswaData[kelas][index].jk = jk;
+            showSubSection('lihatKelas'); lihatKelas(kelas);
+        }
+        function hapusSiswa() {
+            const { kelas, index } = editCtx; if (index < 0) return;
+            const s = siswaData[kelas][index];
+            if (confirm(`Hapus siswa ${s.nama} (${s.nis}) dari kelas ${kelas}?`)) {
+                siswaData[kelas].splice(index, 1);
+                showSubSection('lihatKelas'); lihatKelas(kelas);
+            }
+        }
+
+        // ===== PROFIL =====
+        function updateProfil() {
+            const depan = document.getElementById('pf_namaDepan').value.trim();
+            const belakang = document.getElementById('pf_namaBelakang').value.trim();
+            const nip = document.getElementById('pf_nip').value.trim();
+            const namaGabung = [depan, belakang].filter(Boolean).join(' ');
+            document.getElementById('profileNamaTampilan').textContent = namaGabung || '—';
+            document.getElementById('headerNama').textContent = namaGabung || '—';
+            document.getElementById('headerNIP').textContent = nip ? `NIS. ${nip}` : 'NIS. —';
+            alert('Profil diperbarui (simulasi).');
+        }
+
+        // ===== LOGOUT CONFIRM (anti ketutup taskbar) =====
+        const btnLogout = document.getElementById('btnLogout');
+        const logoutPop = document.getElementById('logoutPop');
+        const logoutBackdrop = document.getElementById('logoutBackdrop');
+        const btnCancelLogout = document.getElementById('btnCancelLogout');
+        const btnDoLogout = document.getElementById('btnDoLogout');
+
+        btnLogout.addEventListener('click', () => {
+            const r = btnLogout.getBoundingClientRect();
+
+            // Tampilkan sementara untuk ukur ukuran
+            logoutPop.style.display = 'block';
+            logoutPop.style.visibility = 'hidden';
+            logoutPop.style.top = '0px';
+            logoutPop.style.left = '0px';
+
+            const popW = logoutPop.offsetWidth || 280;
+            const popH = logoutPop.offsetHeight || 120;
+
+            // Default: kanan tombol, sedikit naik
+            let top = r.top - 8;
+            let left = r.right + 16;
+
+            const margin = 16;
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            // Jika ke bawah mentok → taruh DI ATAS tombol
+            if (top + popH > vh - margin) {
+                top = r.top - popH - margin;
+            }
+            // Batas atas
+            if (top < margin) top = margin;
+
+            // Jika melewati kanan → taruh di kiri tombol
+            if (left + popW > vw - margin) {
+                left = Math.max(margin, r.left - popW - margin);
+            }
+
+            // Tampilkan final
+            logoutBackdrop.style.display = 'block';
+            logoutPop.style.visibility = '';
+            logoutPop.style.top = `${top}px`;
+            logoutPop.style.left = `${left}px`;
+        });
+
+        function closeLogoutPop() {
+            logoutBackdrop.style.display = 'none';
+            logoutPop.style.display = 'none';
+        }
+        logoutBackdrop.addEventListener('click', closeLogoutPop);
+        btnCancelLogout.addEventListener('click', closeLogoutPop);
+
+        btnDoLogout.addEventListener('click', () => {
+            try { localStorage.clear(); } catch (e) { }
+            closeLogoutPop();
+            alert('You have been logged out (simulasi).');
+            // window.location.href = 'login.html'; // aktifkan kalau sudah ada halaman login
+        });
+
+        // Filter Dashboard (simulasi)
+        document.getElementById('btnTerapkan').addEventListener('click', () => {
+            const kls = document.getElementById('filterKelas').value;
+            const mp = document.getElementById('filterMapel').value;
+            const rt = document.getElementById('filterRentang').value;
+            console.log('Filter diterapkan →', { kelas: kls, mapel: mp, rentang: rt });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,353 @@
+/* Definisi Warna Kustom */
+:root {
+    --purple-dark: #3f317b;
+    /* Warna Ungu untuk Header */
+    --purple-light: #5a4f91;
+    /* Warna Ungu untuk Bagian Header Kanan */
+    --card-dark: #3c4273;
+    /* Ungu Tua untuk Card */
+    --card-light: #5c629e;
+    /* Ungu Lebih Terang untuk Card */
+    --blue-primary: #007bff;
+    /* Warna Biru untuk Tombol */
+    --text-info-light: #b3e5fc;
+    /* Warna Biru Muda untuk teks detail nilai */
+}
+
+/* ---------------- HEADER ---------------- */
+
+.custom-header {
+    background-color: var(--purple-dark);
+    height: 65px;
+    /* Tinggi header agar ikon hamburger sejajar */
+    z-index: 1050;
+    /* Pastikan di atas konten lain */
+}
+
+/* Bagian Ungu Kanan di Header */
+.custom-header-right {
+    background-color: var(--purple-light);
+    width: 20%;
+    /* Sesuaikan lebar agar terlihat seperti di Figma */
+    height: 100%;
+    position: absolute;
+    /* Mengatur posisi absolut di dalam header */
+    right: 0;
+    top: 0;
+}
+
+/* ---------------- KONTEN UTAMA ---------------- */
+
+/* Card Mata Pelajaran */
+.custom-card {
+    /* Gradient warna dari gelap ke terang */
+    background: linear-gradient(135deg, var(--card-dark), var(--card-light));
+    color: white;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.text-info-light {
+    color: var(--text-info-light) !important;
+    cursor: pointer;
+}
+
+/* Container Card agar bisa di-scroll horizontal */
+.card-scroll-container {
+    flex-wrap: nowrap;
+    /* Mencegah card turun ke baris baru */
+}
+
+/* Tombol Arrow Kanan */
+.custom-arrow-btn {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin-left: 10px;
+    color: #6c757d;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    align-self: center;
+    /* Agar sejajar di tengah vertical */
+    flex-shrink: 0;
+}
+
+/* ---------------- FOOTER (SIGN UP/LOG IN) ---------------- */
+
+.custom-footer {
+    padding: 15px !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+}
+
+.custom-btn {
+    width: 49%;
+    /* Kunci agar tombol tampil lebar dan hampir penuh */
+    padding: 10px 0;
+    font-size: 16px;
+    border-radius: 10px;
+    /* Lebih membulat */
+    font-weight: bold;
+    text-align: center;
+}
+
+.btn-primary.custom-btn {
+    background-color: var(--blue-primary);
+    border-color: var(--blue-primary);
+}
+
+/* ---------------- SIDEBAR/OFFCANVAS ---------------- */
+
+.custom-sidebar {
+    width: 80%;
+    /* Lebar sidebar di mobile/offcanvas */
+    max-width: 300px;
+}
+
+.sidebar-nav-list .nav-link {
+    color: #495057 !important;
+    /* Warna teks default */
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+/* Styling untuk item navigasi yang sedang aktif */
+.sidebar-nav-list .active-nav {
+    border-left: 5px solid var(--purple-dark);
+    font-weight: bold;
+}
+
+.sidebar-nav-list .active-nav .nav-link {
+    color: var(--purple-dark) !important;
+}
+
+/* ---------------- RESPONSIVE DESIGN ---------------- */
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .main-content {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    .custom-header {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .custom-header-right {
+        width: 30%;
+        /* Lebih lebar di mobile */
+    }
+
+    .card-scroll-container {
+        padding-bottom: 20px;
+    }
+
+    .custom-card {
+        min-width: 200px !important;
+        /* Lebih kecil di mobile */
+    }
+
+    .custom-footer {
+        padding: 10px 15px !important;
+    }
+
+    .custom-btn {
+        font-size: 14px;
+        padding: 8px 0;
+    }
+
+    /* Tabel responsive */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* Modal responsive */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    /* Form responsive */
+    .form-control,
+    .form-select {
+        font-size: 0.875rem;
+    }
+
+    /* Statistik cards */
+    .card-body {
+        padding: 1rem 0.75rem;
+    }
+
+    .card-body i {
+        font-size: 2rem !important;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .custom-card {
+        min-width: 220px;
+    }
+
+    .main-content {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1025px) {
+    .custom-sidebar {
+        width: 300px;
+    }
+
+    .main-content {
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+    }
+}
+
+/* ---------------- UTILITY CLASSES ---------------- */
+
+.text-truncate-mobile {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .text-truncate-mobile {
+        max-width: 150px;
+    }
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Custom scrollbar */
+.card-scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.card-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.card-scroll-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.card-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* ---------------- DROPDOWN LOGOUT ---------------- */
+
+.user-info-box {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.user-info-box:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 5px 10px;
+    margin: -5px -10px;
+}
+
+.dropdown-menu {
+    min-width: 150px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #495057;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #dc3545;
+}
+
+.dropdown-item i {
+    font-size: 16px;
+    width: 20px;
+}
+
+/* Mobile dropdown adjustments */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        min-width: 120px;
+        font-size: 13px;
+    }
+
+    .dropdown-item {
+        padding: 6px 12px;
+    }
+}
+
+
+.hero-section {
+    background: linear-gradient(135deg, #3f317b, #5a4f91);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: #3f317b;
+    margin-bottom: 1rem;
+}
+
+.btn-hero {
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}

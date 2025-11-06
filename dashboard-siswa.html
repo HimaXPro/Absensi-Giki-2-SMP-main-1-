@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Siswa — Dashboard & Status</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css\sylesiswa.css">
+
+</head>
+
+<body>
+    <div class="app d-flex">
+        <!-- SIDEBAR -->
+        <aside class="sidebar d-flex flex-column align-items-center py-3">
+            <!-- Home -->
+            <div class="btn-icon active" id="navHome" title="Beranda"><i class="bi bi-house-door"></i></div>
+            <!-- Status Absen-->
+            <div class="btn-icon" id="navStatus" title="Status Absen"><i class="bi bi-journal-text"></i></div>
+            <!-- keseluruhan Jadwal-->
+            <div class="btn-icon" id="JadwalMapel" title="Jadwal"><i class="bi bi-calendar3"></i></div>
+            <!-- Akun-->
+            <div class="btn-icon" id="Akunsiswa" title="Akun"><i class="bi bi-person"></i></div>
+
+            <div class="sidebar-footer w-100 text-center pt-3">
+                <div class="btn-icon" title="Pengaturan"><i class="bi bi-gear"></i></div> <!-- pengaturan-->
+                <!-- logout-->
+                <div class="btn-icon" id="btnLogout" title="Keluar"><i class="bi bi-box-arrow-left"></i></div>
+            </div>
+        </aside>
+
+        <!-- PAGE -->
+        <main class="page flex-grow-1">
+            <!-- HEADER (shared) -->
+            <div class="page-header d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="brand-title mb-1">Absensi Siswa <span class="fw-normal">| SMP GIKI 2 Surabaya</span></h5>
+                    <div class="subtle">
+                        <span class="fw-semibold">Jadwal Saya</span>
+                        <span class="ms-1">| <span id="todayStr">Senin, 06 - 10 - 2025</span></span>
+                    </div>
+                    <!-- Judul mapel hanya terlihat di view status -->
+                    <div class="mt-3 fw-semibold fs-6" id="mapelName" style="display:none">Matematika 9A</div>
+                </div>
+                <div class="profile-chip">
+                    <div class="avatar">S</div>
+                    <div style="line-height:1">
+                        <div class="fw-semibold small">Siswa</div>
+                        <div class="text-secondary" style="font-size:.75rem">NIS. -</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== VIEW: DASHBOARD ===== -->
+            <section id="viewDashboard" class="view active">
+                <div class="schedule-wrap">
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c1">
+                                <div class="title">Matematika 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">07.00 - 09.00</div>
+                                <button class="btn btn-status" data-mapel="Matematika 9A">Status Absen</button>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c2">
+                                <div class="title">Bahasa Inggris 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">09.00 - 11.00</div>
+                                <button class="btn btn-status" data-mapel="Bahasa Inggris 9A">Status Absen</button>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c3">
+                                <div class="title">IPA 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">11.00 - 12.00<br>13.00 - 14.00</div>
+                                <button class="btn btn-status text-dark" data-mapel="IPA 9A">Status Absen</button>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c4">
+                                <div class="title">PPKn 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">14.00 - 16.00</div>
+                                <button class="btn btn-status" data-mapel="PPKn 9A">Status Absen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== VIEW: STATUS ABSEN ===== -->
+            <section id="viewStatus" class="view">
+                <div class="status-wrap">
+                    <div class="status-box">
+                        <div class="status-header">Cek Status Absen</div>
+                        <table>
+                            <tr>
+                                <td>No. Induk Siswa</td>
+                                <td id="nisCell">-</td>
+                            </tr>
+                            <tr>
+                                <td>Nama</td>
+                                <td id="namaCell">-</td>
+                            </tr>
+                            <tr>
+                                <td>Status</td>
+                                <td><span class="text-success fw-semibold">Berhasil</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== VIEW: JADWAL MAPEL ===== -->
+            <section id="viewMapel" class="view">
+                <div class="schedule-wrap">
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c1">
+                                <div class="title">Matematika 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">Blalal</div>
+                                <br>
+                                <button class="btn btn-status" data-mapel="Matematika 9A">Detail kehadiran</button>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c2">
+                                <div class="title">Bahasa Inggris 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">Blalal</div>
+                                <br>
+                                <button class="btn btn-status" data-mapel="Bahasa Inggris 9A">Detail kehadiran</button>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c3">
+                                <div class="title">IPA 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">Blalal</div>
+                                <br>
+                                <button class="btn btn-status text-dark" data-mapel="IPA 9A">Detail kehadiran</button>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card-lesson c4">
+                                <div class="title">PPKn 9A</div>
+                                <div class="line"></div>
+                                <div class="meta">Blalal</div>
+                                <br>
+                                <button class="btn btn-status" data-mapel="PPKn 9A">Detail kehadiran</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ===== VIEW: DETAIL KEHADIRAN ===== -->
+            <section id="viewDetail" class="view">
+                <div class="container-fluid px-3 px-md-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+
+                            <div id="detailMapelTitle" class="fw-semibold">—</div>
+                        </div>
+                        <div class="profile-chip">
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card shadow-sm rounded-4 overflow-hidden">
+                    <div class="detail-card__header px-4 py-3 text-white">Detail Kehadiran</div>
+                    <div class="bg-white p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr class="text-secondary small">
+                                        <th>Mata Pelajaran</th>
+                                        <th>Nama</th>
+                                        <th>Hari & Tanggal</th>
+                                        <th>Pertemuan</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailTbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button id="btnBackToMapel" class="btn btn-light border rounded-pill px-4">Kembali</button>
+                </div>
+    </div>
+    </section>
+
+    </main>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== Helpers =====
+        function setToday() {
+            const el = document.getElementById('todayStr');
+            const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const d = new Date();
+            const dd = String(d.getDate()).padStart(2, '0');
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const yyyy = d.getFullYear();
+            el.textContent = `${hari[d.getDay()]}, ${dd} - ${mm} - ${yyyy}`;
+        }
+        function renderProfile() {
+            const name = localStorage.getItem('name') || 'Siswa';
+            const nis = localStorage.getItem('nis') || '-';
+            document.querySelector('.profile-chip .small').textContent = name;
+            document.querySelector('.profile-chip .text-secondary').textContent = 'NIS. ' + nis;
+            document.querySelector('.profile-chip .avatar').textContent = (name.trim()[0] || 'S').toUpperCase();
+        }
+        const dataKehadiranByMapel = {
+            "Bahasa Inggris 9A": [
+                { mapel: "Bahasa Inggris 9A", nama: "Kevin Imanuel", tanggal: "Senin, 06 - 10 - 2025", pertemuan: "Pertama", status: "Hadir" },
+                { mapel: "Bahasa Inggris 9A", nama: "Kevin Imanuel", tanggal: "Kamis, 09 - 10 - 2025", pertemuan: "Kedua", status: "Hadir" },
+                { mapel: "Bahasa Inggris 9A", nama: "Kevin Imanuel", tanggal: "Senin, 13 - 10 - 2025", pertemuan: "Ketiga", status: "Izin" },
+            ],
+            "Matematika 9A": [
+                { mapel: "Matematika 9A", nama: "Kevin Imanuel", tanggal: "Senin, 06 - 10 - 2025", pertemuan: "Pertama", status: "Hadir" }
+            ],
+            "IPA 9A": [
+                { mapel: "IPA 9A", nama: "Kevin Imanuel", tanggal: "Selasa, 07 - 10 - 2025", pertemuan: "Pertama", status: "Hadir" }
+            ],
+            "PPKn 9A": [
+                { mapel: "PPKn 9A", nama: "Kevin Imanuel", tanggal: "Rabu, 08 - 10 - 2025", pertemuan: "Pertama", status: "Hadir" }
+            ],
+        };
+
+        function pillStatus(status) {
+            const ok = String(status).toLowerCase() === 'hadir';
+            const cls = ok ? 'badge-status badge-hadir' : 'badge-status badge-izin';
+            return `<span class="${cls}">${status}</span>`;
+        }
+        function renderDetail(mapel) {
+            document.getElementById('detailMapelTitle').textContent = mapel;
+            const rows = (dataKehadiranByMapel[mapel] || []).map(it => `
+    <tr>
+      <td class="small text-secondary">${it.mapel}</td>
+      <td>${it.nama}</td>
+      <td>${it.tanggal}</td>
+      <td>${it.pertemuan}</td>
+      <td class="text-center">${pillStatus(it.status)}</td>
+    </tr>
+  `).join('');
+            document.getElementById('detailTbody').innerHTML = rows || `
+    <tr><td colspan="5" class="text-center text-secondary py-4">Belum ada data kehadiran.</td></tr>
+  `;
+            // sync chip profil kanan atas di view detail
+            renderProfile();
+        }
+        function showView(which) {
+            ['viewDashboard', 'viewStatus', 'viewMapel', 'viewDetail'].forEach(id => {
+                document.getElementById(id)?.classList.remove('active');
+            });
+            document.getElementById(which).classList.add('active');
+
+            // Sidebar states
+            document.getElementById('navHome').classList.toggle('active', which === 'viewDashboard');
+            document.getElementById('navStatus').classList.toggle('active', which === 'viewStatus');
+            // Jadwal aktif juga saat detail (karena turunan dari jadwal)
+            document.getElementById('JadwalMapel').classList.toggle('active', which === 'viewMapel' || which === 'viewDetail');
+
+            // Judul mapel hanya di view Status
+            document.getElementById('mapelName').style.display = (which === 'viewStatus') ? 'block' : 'none';
+        }
+
+
+        // (function () {
+        //     // Proteksi role Siswa
+        //     const loggedIn = localStorage.getItem('loggedIn') === 'true';
+        //     const role = localStorage.getItem('role');
+        //     if (!loggedIn || role !== 'Siswa') {
+        //         // kalau belum login atau bukan siswa -> balik ke login
+        //         window.location.href = 'login.html';
+        //         return;
+        //     }
+
+        setToday();
+        renderProfile();
+
+        // Klik kartu: buka Status
+        // Klik tombol "Status Absen" pada DASHBOARD -> buka viewStatus
+        document.querySelectorAll('#viewDashboard .btn-status').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mapel = btn.dataset.mapel
+                    || btn.closest('.card-lesson')?.querySelector('.title')?.textContent.trim()
+                    || 'Mapel';
+                localStorage.setItem('statusPage.mapel', mapel);
+                document.getElementById('mapelName').textContent = mapel;
+
+                const nama = localStorage.getItem('name') || 'Siswa';
+                const nis = localStorage.getItem('nis') || '-';
+                document.getElementById('namaCell').textContent = nama;
+                document.getElementById('nisCell').textContent = nis;
+
+                showView('viewStatus');
+            });
+        });
+
+        // Klik tombol "Detail kehadiran" pada JADWAL MAPEL -> buka viewDetail
+        document.querySelectorAll('#viewMapel .btn-status').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mapel = btn.dataset.mapel
+                    || btn.closest('.card-lesson')?.querySelector('.title')?.textContent.trim()
+                    || 'Mapel';
+                renderDetail(mapel);
+                showView('viewDetail');
+            });
+        });
+
+        // Tombol Kembali dari view detail ke jadwal mapel
+        document.getElementById('btnBackToMapel').addEventListener('click', () => {
+            showView('viewMapel');
+        });
+
+        // Sidebar: Home & Status
+        document.getElementById('navHome').addEventListener('click', () => showView('viewDashboard'));
+        document.getElementById('navStatus').addEventListener('click', () => {
+            const mapel = localStorage.getItem('statusPage.mapel') || 'Matematika 9A';
+            document.getElementById('mapelName').textContent = mapel;
+            document.getElementById('namaCell').textContent = localStorage.getItem('name');
+            document.getElementById('nisCell').textContent = localStorage.getItem('nis');
+            showView('viewStatus');
+        });
+        document.getElementById('JadwalMapel').addEventListener('click', () => showView('viewMapel'));
+
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        });
+        }) ();
+    </script>
+
+
+
+
+</body>
+
+</html>
