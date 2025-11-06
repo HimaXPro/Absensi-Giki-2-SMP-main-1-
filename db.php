@@ -1,8 +1,8 @@
 <?php
 $host = "localhost"; // Ganti dengan host database Anda
-$dbname = "absensi_siswa"; // Ganti dengan nama database Anda
+$dbname = "absensi"; // Ganti dengan nama database Anda
 $username = "root"; // Ganti dengan username MySQL Anda
-$password = ""; // Ganti dengan password MySQL Anda
+$password = "root"; // Ganti dengan password MySQL Anda
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
