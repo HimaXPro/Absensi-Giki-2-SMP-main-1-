@@ -1,53 +1,28 @@
 <?php
 include('db.php'); // Menghubungkan dengan file db.php
 
-// Proses Signup
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup'])) {
-    // Menangkap data dari form signup
-    $full_name = $_POST['full_name'];
-    $nis_nip = $_POST['nis_nip'];
-    $role = $_POST['role'];
-    $class = $_POST['class'];
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Meng-hash password
-    $password_hash = password_hash($password, PASSWORD_BCRYPT);
-
-    // Memasukkan data ke dalam database
-    $sql = "INSERT INTO Users (full_name, nis_nip, role, class, username, email, password_hash) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$full_name, $nis_nip, $role, $class, $username, $email, $password_hash]);
-
-    echo "Pendaftaran berhasil! Silakan login.";
-}
-
-include('db.php'); // Menghubungkan dengan file db.php
-
-//login
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     // Menangkap data dari form login
     $username = $_POST['username'];
     $password = $_POST['password'];
     $role = $_POST['role']; // Menyaring berdasarkan role yang dipilih
 
-    // Mencari pengguna berdasarkan username dan role
-    $sql = "SELECT * FROM Users WHERE username = ? AND role = ?";
+    // Mencari pengguna berdasarkan username dan role dengan PDO
+    $sql = "SELECT * FROM Users WHERE username = :username AND role = :role";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $username, $role); // Mengikat parameter username dan role
+
+    // Mengikat parameter
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+
+    // Menjalankan query
     $stmt->execute();
 
     // Mengambil hasil query
-    $result = $stmt->get_result();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Cek apakah data ditemukan
-    if ($result->num_rows > 0) {
-        // Ambil data pengguna
-        $user = $result->fetch_assoc(); // Mengambil data sebagai array asosiatif
-
+    if ($user) {
         // Memeriksa apakah password cocok
         if (password_verify($password, $user['password_hash'])) {
             // Jika login berhasil, buat session dan arahkan ke dashboard
@@ -56,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
 
-            // Redirect ke dashboard
-             if ($user['role'] == 'Guru') {
+            // Redirect ke dashboard berdasarkan role
+            if ($user['role'] == 'Guru') {
                 header('Location: dasboardguru.html');
             } elseif ($user['role'] == 'Siswa') {
                 header('Location: dashboard-siswa.html');
@@ -73,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
